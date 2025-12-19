@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Web Application Security Vulnerability Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            line-height: 1.6;
+            color: #222;
+        }
+        h1, h2, h3 {
+            color: #1f2f46;
+        }
+        .section {
+            margin-bottom: 35px;
+        }
+        .evidence {
+            background-color: #f4f4f4;
+            border-left: 5px solid #b30000;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        code {
+            display: block;
+            background: #e9e9e9;
+            padding: 8px;
+            margin-top: 8px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Web Application Security Vulnerability Report</h1>
+
+<p><strong>Target Website:</strong> https://rphs.nclack.k12.or.us</p>
+<p><strong>Scope:</strong> Absence of Anti-CSRF Token and PII Disclosure</p>
+
+<div class="section">
+    <h2>1. Absence of Anti-CSRF Token</h2>
+
+    <h3>Overview</h3>
+    <p>
+        Cross-Site Request Forgery (CSRF) is a vulnerability that allows an attacker
+        to trick an authenticated user’s browser into submitting unintended requests.
+        The application does not appear to implement anti-CSRF protections on at least
+        one state-accessible endpoint.
+    </p>
+
+    <h3>Evidence</h3>
+    <div class="evidence">
+        <p>
+            Security testing identified the absence of anti-CSRF tokens on the following page:
+        </p>
+        <code>
+GET https://rphs.nclack.k12.or.us/about-us/staff-calendar
+        </code>
+        <p>
+            Requests associated with this page do not include a unique, server-validated
+            anti-CSRF token, indicating that request origin and user intent are not verified.
+        </p>
+        <code>
+CWE ID: 352 (Cross-Site Request Forgery)
+        </code>
+    </div>
+
+    <h3>Impact</h3>
+    <p>
+        If a user is authenticated to the site, an attacker could potentially cause
+        unauthorized requests to be executed by luring the user to a malicious webpage.
+        This may result in unintended actions being performed under the victim’s session.
+    </p>
+
+    <h3>Remediation</h3>
+    <ul>
+        <li>Implement unique, unpredictable anti-CSRF tokens for all state-changing requests.</li>
+        <li>Validate tokens server-side before processing requests.</li>
+        <li>Consider validating <code>Origin</code> or <code>Referer</code> headers as an additional safeguard.</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h2>2. Personally Identifiable Information (PII) Disclosure</h2>
+
+    <h3>Overview</h3>
+    <p>
+        Personally Identifiable Information (PII) Disclosure occurs when sensitive
+        information is exposed through publicly accessible application responses.
+        Passive analysis identified sensitive numeric data returned from multiple pages.
+    </p>
+
+    <h3>Evidence</h3>
+    <div class="evidence">
+        <p>
+            PII was detected in responses from the following endpoints:
+        </p>
+        <code>
+GET https://rphs.nclack.k12.or.us/fs/pages/athletics
+GET https://rphs.nclack.k12.or.us/fs/pages/calendar
+GET https://rphs.nclack.k12.or.us/fs/pages/news
+        </code>
+        <p>
+            The exposed data matched patterns consistent with credit-card-related identifiers:
+        </p>
+        <code>
+Evidence: 4427313810781538
+CWE ID: 359
+WASC ID: 13
+Source: Passive (PII Disclosure)
+        </code>
+    </div>
+
+    <h3>Impact</h3>
+    <p>
+        Disclosure of PII on publicly accessible pages may result in privacy violations,
+        reputational damage, and potential regulatory non-compliance. Even inadvertent
+        exposure increases organizational risk.
+    </p>
+
+    <h3>Remediation</h3>
+    <ul>
+        <li>Remove all sensitive data from public-facing responses.</li>
+        <li>Ensure backend logic does not expose PII to unauthenticated users.</li>
+        <li>Apply strict data-handling and output-filtering controls.</li>
+    </ul>
+</div>
+
+<hr>
+
+<p><em>
+This report documents only the two specified findings based on observed scan evidence.
+</em></p>
+
+</body>
+</html>
