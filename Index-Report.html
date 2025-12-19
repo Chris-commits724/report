@@ -28,6 +28,7 @@
             padding: 8px;
             margin-top: 8px;
             white-space: pre-wrap;
+            word-break: break-all;
         }
         footer {
             margin-top: 50px;
@@ -94,23 +95,24 @@ CWE ID: 352 (Cross-Site Request Forgery)
     <h3>Overview</h3>
     <p>
         Personally Identifiable Information (PII) Disclosure occurs when sensitive
-        information is exposed through publicly accessible application responses.
-        Passive analysis identified sensitive numeric data returned from multiple pages.
+        information is exposed through publicly accessible application resources.
+        In this case, sensitive numeric data was identified within a client-side
+        JavaScript asset loaded by multiple public pages.
     </p>
 
     <h3>Evidence</h3>
     <div class="evidence">
         <p>
-            PII was detected in responses from the following publicly accessible endpoints:
+            PII was detected within the following JavaScript resource referenced by
+            publicly accessible pages:
         </p>
         <code>
-GET https://rphs.nclack.k12.or.us/fs/pages/athletics
-GET https://rphs.nclack.k12.or.us/fs/pages/calendar
-GET https://rphs.nclack.k12.or.us/fs/pages/news
+&lt;script src="/assets/in_layout_head-a1732a46958589580039809d7486b8e0b85e6eee0b4427313810781538a6afbd.js"&gt;&lt;/script&gt;
         </code>
         <p>
-            The exposed numeric data included a 6-digit Bank Identification Number (BIN)
-            consistent with a <strong>Visa-issued bank card</strong>.
+            The filename itself contains sensitive numeric data. Analysis of the value
+            revealed a 6-digit Bank Identification Number (BIN) corresponding to a
+            <strong>Visa-issued bank card</strong>.
         </p>
         <code>
 Evidence: 4427313810781538
@@ -119,21 +121,30 @@ CWE ID: 359
 WASC ID: 13
 Source: Passive (PII Disclosure)
         </code>
+        <p>
+            This script was observed being loaded by the following endpoints:
+        </p>
+        <code>
+/fs/pages/athletics
+/fs/pages/calendar
+/fs/pages/news
+        </code>
     </div>
 
     <h3>Impact</h3>
     <p>
-        Exposure of payment card–related identifiers, even partial or unintended,
-        increases the risk of financial fraud, privacy violations, and regulatory
-        non-compliance. Public availability of such data represents a serious security
-        and privacy concern.
+        Exposure of payment card–related identifiers within publicly accessible
+        JavaScript assets increases the risk of data harvesting, financial fraud,
+        and regulatory non-compliance. Client-side asset exposure is particularly
+        concerning due to ease of automated discovery and caching.
     </p>
 
     <h3>Remediation</h3>
     <ul>
-        <li>Immediately remove any payment card–related data from public responses.</li>
-        <li>Review content generation and backend data sources for inadvertent PII inclusion.</li>
-        <li>Apply strict validation and filtering to prevent sensitive data from being rendered.</li>
+        <li>Immediately remove all sensitive data from filenames and JavaScript content.</li>
+        <li>Rotate and invalidate any exposed payment-related identifiers.</li>
+        <li>Review asset build and deployment pipelines to prevent PII inclusion.</li>
+        <li>Implement automated scanning of static assets for sensitive data patterns.</li>
     </ul>
 </div>
 
