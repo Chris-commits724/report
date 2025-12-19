@@ -29,6 +29,13 @@
             margin-top: 8px;
             white-space: pre-wrap;
         }
+        footer {
+            margin-top: 50px;
+            padding-top: 15px;
+            border-top: 1px solid #ccc;
+            font-size: 0.9em;
+            color: #555;
+        }
     </style>
 </head>
 <body>
@@ -94,7 +101,7 @@ CWE ID: 352 (Cross-Site Request Forgery)
     <h3>Evidence</h3>
     <div class="evidence">
         <p>
-            PII was detected in responses from the following endpoints:
+            PII was detected in responses from the following publicly accessible endpoints:
         </p>
         <code>
 GET https://rphs.nclack.k12.or.us/fs/pages/athletics
@@ -102,10 +109,12 @@ GET https://rphs.nclack.k12.or.us/fs/pages/calendar
 GET https://rphs.nclack.k12.or.us/fs/pages/news
         </code>
         <p>
-            The exposed data matched patterns consistent with credit-card-related identifiers:
+            The exposed numeric data included a 6-digit Bank Identification Number (BIN)
+            consistent with a <strong>Visa-issued bank card</strong>.
         </p>
         <code>
 Evidence: 4427313810781538
+Card Type: Visa (based on 6-digit BIN)
 CWE ID: 359
 WASC ID: 13
 Source: Passive (PII Disclosure)
@@ -114,24 +123,26 @@ Source: Passive (PII Disclosure)
 
     <h3>Impact</h3>
     <p>
-        Disclosure of PII on publicly accessible pages may result in privacy violations,
-        reputational damage, and potential regulatory non-compliance. Even inadvertent
-        exposure increases organizational risk.
+        Exposure of payment card–related identifiers, even partial or unintended,
+        increases the risk of financial fraud, privacy violations, and regulatory
+        non-compliance. Public availability of such data represents a serious security
+        and privacy concern.
     </p>
 
     <h3>Remediation</h3>
     <ul>
-        <li>Remove all sensitive data from public-facing responses.</li>
-        <li>Ensure backend logic does not expose PII to unauthenticated users.</li>
-        <li>Apply strict data-handling and output-filtering controls.</li>
+        <li>Immediately remove any payment card–related data from public responses.</li>
+        <li>Review content generation and backend data sources for inadvertent PII inclusion.</li>
+        <li>Apply strict validation and filtering to prevent sensitive data from being rendered.</li>
     </ul>
 </div>
 
-<hr>
-
-<p><em>
-This report documents only the two specified findings based on observed scan evidence.
-</em></p>
+<footer>
+    <p>
+        <strong>Report Author:</strong> Christian High<br>
+        <strong>Role:</strong> Web Developer & Penetration Tester
+    </p>
+</footer>
 
 </body>
 </html>
